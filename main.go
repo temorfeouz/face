@@ -1,27 +1,23 @@
 package main
 
 import (
-	"bufio"
-	"bytes"
 	"fmt"
-	"image"
 	"image/color"
-	"image/jpeg"
 	"log"
 	"os"
-	"time"
 
 	"io/ioutil"
 
 	"strings"
 
+	"temorfeouz/facereconizer/storage"
+
 	"github.com/Kagami/go-face"
-	"github.com/oliamb/cutter"
 	"gocv.io/x/gocv"
 )
 
 const (
-	imgFolder   = "imgs"
+	imgFolder   = "imgs/"
 	imgBaseName = "img_"
 )
 
@@ -29,7 +25,13 @@ const (
 func main() {
 	// set to use a video capture device 0
 	deviceID := 0
-	reconizePhotos()
+
+	p, err := storage.Read(imgFolder)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("%+v", p)
+	//reconizePhotos()
 	os.Exit(1)
 	// open webcam
 	webcam, err := gocv.OpenVideoCapture(deviceID)
@@ -76,7 +78,7 @@ func main() {
 
 		// draw a rectangle around each face on the original image
 		for _, r := range rects {
-			saveCropped(img, r)
+			storage.SaveCropped("imgs/img_%d.jpg", img, r)
 			gocv.Rectangle(&img, r, blue, 1)
 		}
 
@@ -85,41 +87,6 @@ func main() {
 		window.IMShow(img)
 		window.WaitKey(1)
 	}
-}
-
-func saveCropped(img gocv.Mat, r image.Rectangle) {
-	pic, err := img.ToImage()
-	if err != nil {
-		panic(err)
-	}
-
-	croppedImg, err := cutter.Crop(pic, cutter.Config{
-		Width:  r.Max.X - r.Min.X,
-		Height: r.Max.Y - r.Min.Y,
-		Anchor: image.Point{
-			X: r.Min.X,
-			Y: r.Min.Y,
-		},
-		//Mode:cutter.Centered,
-	})
-	if err != nil {
-		panic(err)
-	}
-
-	// Write to file.
-	fo, err := os.Create(fmt.Sprintf("imgs/img_%d.jpg", time.Now().UnixNano()))
-	if err != nil {
-		fmt.Printf("%v", err)
-		//panic(err)
-	}
-	fw := bufio.NewWriter(fo)
-
-	// Encode to jpeg.
-	var imageBuf bytes.Buffer
-	err = jpeg.Encode(&imageBuf, croppedImg, nil)
-
-	fw.Write(imageBuf.Bytes())
-	fw.Flush()
 }
 
 func readFiles() []string {
