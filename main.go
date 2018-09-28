@@ -11,8 +11,9 @@ _"github.com/oliamb/cutter"
 	"image"
 	"bytes"
 	"image/jpeg"
+	"time"
 )
-
+//https://github.com/Kagami/go-face
 func main() {
 	// set to use a video capture device 0
 	deviceID := 0
@@ -96,7 +97,7 @@ func saveCropped(img gocv.Mat,  r image.Rectangle){
 	}
 	
 	// Write to file.
-	fo, err := os.Create("img.jpg")
+	fo, err := os.Create(fmt.Sprintf("imgs/img_%d.jpg", time.Now().UnixNano()))
 	if err != nil {
 		panic(err)
 	}
