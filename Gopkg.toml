@@ -26,6 +26,10 @@
 
 
 [[constraint]]
+  branch = "master"
+  name = "github.com/Kagami/go-face"
+
+[[constraint]]
   name = "github.com/oliamb/cutter"
   version = "0.2.2"
 
