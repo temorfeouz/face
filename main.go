@@ -10,7 +10,7 @@ import (
 
 	"strings"
 
-	"temorfeouz/facereconizer/storage"
+	"github.com/temorfeouz/face/storage"
 
 	"github.com/Kagami/go-face"
 	"gocv.io/x/gocv"
@@ -26,11 +26,11 @@ func main() {
 	// set to use a video capture device 0
 	deviceID := 0
 
-	p, err := storage.Read(imgFolder)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("%+v", p)
+	//p, err := storage.Read(imgFolder)
+	//if err != nil {
+	//	panic(err)
+	//}
+	//fmt.Println("%+v", p)
 	//reconizePhotos()
 	os.Exit(1)
 	// open webcam

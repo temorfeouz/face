@@ -3,25 +3,44 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:e9499b14f5c9eda1e54d81242299072175d2685bdd39bae3df1e41b67eb6db30"
   name = "github.com/Kagami/go-face"
   packages = ["."]
+  pruneopts = "UT"
   revision = "863b26a6405e66626eb474704048949ef5124236"
 
 [[projects]]
+  digest = "1:0dcdc1a94f2f2b0ca169176e8344bab0f74ecfefd7a51957a88a789bbd683112"
   name = "github.com/oliamb/cutter"
   packages = ["."]
+  pruneopts = "UT"
   revision = "de2952ec22155c8e68bf4ac03684b1d1d734b53c"
   version = "v0.2.2"
 
 [[projects]]
+  digest = "1:40e195917a951a8bf867cd05de2a46aaf1806c50cf92eebf4c16f78cd196f747"
+  name = "github.com/pkg/errors"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
+  version = "v0.8.0"
+
+[[projects]]
+  digest = "1:52a94d0eb5420c4f6ec0ca108c1820884c2a66ae6027f90f2326db08ffe7b0bd"
   name = "gocv.io/x/gocv"
   packages = ["."]
+  pruneopts = "UT"
   revision = "116580adca5ee7dbf8d1307c9072f5094051116f"
   version = "v0.16.0"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "ff824612ded6b92f5e8245c8a0ea4251bf86e70d4b355a00a0ced9f7a886fa8e"
+  input-imports = [
+    "github.com/Kagami/go-face",
+    "github.com/oliamb/cutter",
+    "github.com/pkg/errors",
+    "gocv.io/x/gocv",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1

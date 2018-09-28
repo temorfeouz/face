@@ -1,7 +1,7 @@
 package service
 
 import (
-	"temorfeouz/facereconizer/storage"
+	"github.com/temorfeouz/face/storage"
 
 	"github.com/Kagami/go-face"
 	"github.com/pkg/errors"
