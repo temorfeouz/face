@@ -1,7 +1,10 @@
 package storage
 
 import (
+	"fmt"
+	"image"
 	"io/ioutil"
+	"os"
 	"strings"
 )
 
@@ -38,6 +41,27 @@ func (fr *FaceReader) Read(dir string) ([]Person, error) {
 	return prsns, nil
 }
 
+func (fr *FaceReader) ReadAsJpg(out chan image.Image, path string) {
+
+	imgs, err := fr.read(path)
+	if err != nil {
+		panic(err)
+	}
+
+	for _, v := range imgs {
+		fmt.Println(v)
+		h, err := os.Open(v)
+		if err != nil {
+			panic(err)
+		}
+		pic, _, err := image.Decode(h)
+		if err != nil {
+			panic(err)
+		}
+		out <- pic
+	}
+}
+
 func (fr *FaceReader) read(path string) ([]string, error) {
 	var imgs []string
 
@@ -47,8 +71,16 @@ func (fr *FaceReader) read(path string) ([]string, error) {
 	}
 
 	for _, f := range fs {
-		if !f.IsDir() && strings.Contains(f.Name(), FileExt) {
-			imgs = append(imgs, path+f.Name())
+		if !f.IsDir() {
+			if strings.Contains(f.Name(), FileExt) {
+				imgs = append(imgs, path+"/"+f.Name())
+			}
+		} else {
+			inDir, err := fr.read(path + "/" + f.Name())
+			if err != nil {
+				return nil, err
+			}
+			imgs = append(imgs, inDir...)
 		}
 	}
 

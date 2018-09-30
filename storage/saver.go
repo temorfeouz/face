@@ -46,4 +46,5 @@ func SaveCropped(tmpl string, img gocv.Mat, r image.Rectangle) {
 
 	fw.Write(imageBuf.Bytes())
 	fw.Flush()
+	fo.Close()
 }

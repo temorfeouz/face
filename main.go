@@ -2,17 +2,17 @@ package main
 
 import (
 	"fmt"
+	"image"
 	"image/color"
-	"log"
-	"os"
-
 	"io/ioutil"
+	"log"
+
+	"github.com/temorfeouz/face/service"
 
 	"strings"
 
 	"github.com/temorfeouz/face/storage"
 
-	"github.com/Kagami/go-face"
 	"gocv.io/x/gocv"
 )
 
@@ -21,18 +21,35 @@ const (
 	imgBaseName = "img_"
 )
 
+// export CPATH=/usr/local/include/dlib
+// export CPATH=/usr/include/dlibs
 //https://github.com/Kagami/go-face
 func main() {
 	// set to use a video capture device 0
 	deviceID := 0
 
+	str := storage.FaceReader{}
+
+	var ff service.FaceFinder
+	out := make(chan image.Image, 1)
+	ff.Init()
+
+	go str.ReadAsJpg(out, "/STORAGE/MEDIA/_FOTO/Анастасия Артемовна")
+	for {
+		select {
+		case pic := <-out:
+			ff.FindFace(pic)
+		}
+	}
+	ff.Dispose()
+	return
 	//p, err := storage.Read(imgFolder)
 	//if err != nil {
 	//	panic(err)
 	//}
 	//fmt.Println("%+v", p)
 	//reconizePhotos()
-	os.Exit(1)
+	//os.Exit(1)
 	// open webcam
 	webcam, err := gocv.OpenVideoCapture(deviceID)
 	if err != nil {
@@ -109,56 +126,56 @@ func readFiles() []string {
 //
 func reconizePhotos() {
 	// Init the recognizer.
-	rec, err := face.NewRecognizer("models")
-	if err != nil {
-		log.Fatalf("Can't init face recognizer: %v", err)
-	}
-	// Free the resources when you're finished.
-	defer rec.Close()
-
-	// Recognize faces on that image.
-
-	var faces []face.Face
-	facesStrs := readFiles()
-	for _, f := range facesStrs {
-		face, err := rec.RecognizeFile(f)
-		if err != nil {
-			log.Fatalf("Can't recognize: %v", err)
-		}
-		faces = append(faces, face...)
-	}
-
-	// Fill known samples. In the real world you would use a lot of images
-	// for each person to get better classification results but in our
-	// example we just get them from one big image.
-	var samples []face.Descriptor
-	var cats []int32
-	for i, f := range faces {
-		samples = append(samples, f.Descriptor)
-		// Each face is unique on that image so goes to its own category.
-		cats = append(cats, int32(i))
-	}
-	// Name the categories, i.e. people on the image.
-	labels := []string{
-		"Sungyeon", "Yehana", "Roa", "Eunwoo", "Xiyeon",
-		"Kyulkyung", "Nayoung", "Rena", "Kyla", "Yuha",
-	}
-	// Pass samples to the recognizer.
-	rec.SetSamples(samples, cats)
-
-	// Now let's try to classify some not yet known image.
-	testImageNayoung := facesStrs[2]
-	nayoungFace, err := rec.RecognizeSingleFile(testImageNayoung)
-	if err != nil {
-		log.Fatalf("Can't recognize: %v", err)
-	}
-	if nayoungFace == nil {
-		log.Fatalf("Not a single face on the image")
-	}
-	catID := rec.Classify(nayoungFace.Descriptor)
-	if catID < 0 {
-		log.Fatalf("Can't classify")
-	}
-	// Finally print the classified label. It should be "Nayoung".
-	fmt.Println(labels[catID])
+	//rec, err := face.NewRecognizer("models")
+	//if err != nil {
+	//	log.Fatalf("Can't init face recognizer: %v", err)
+	//}
+	//// Free the resources when you're finished.
+	//defer rec.Close()
+	//
+	//// Recognize faces on that image.
+	//
+	//var faces []face.Face
+	//facesStrs := readFiles()
+	//for _, f := range facesStrs {
+	//	face, err := rec.RecognizeFile(f)
+	//	if err != nil {
+	//		log.Fatalf("Can't recognize: %v", err)
+	//	}
+	//	faces = append(faces, face...)
+	//}
+	//
+	//// Fill known samples. In the real world you would use a lot of images
+	//// for each person to get better classification results but in our
+	//// example we just get them from one big image.
+	//var samples []face.Descriptor
+	//var cats []int32
+	//for i, f := range faces {
+	//	samples = append(samples, f.Descriptor)
+	//	// Each face is unique on that image so goes to its own category.
+	//	cats = append(cats, int32(i))
+	//}
+	//// Name the categories, i.e. people on the image.
+	//labels := []string{
+	//	"Sungyeon", "Yehana", "Roa", "Eunwoo", "Xiyeon",
+	//	"Kyulkyung", "Nayoung", "Rena", "Kyla", "Yuha",
+	//}
+	//// Pass samples to the recognizer.
+	//rec.SetSamples(samples, cats)
+	//
+	//// Now let's try to classify some not yet known image.
+	//testImageNayoung := facesStrs[2]
+	//nayoungFace, err := rec.RecognizeSingleFile(testImageNayoung)
+	//if err != nil {
+	//	log.Fatalf("Can't recognize: %v", err)
+	//}
+	//if nayoungFace == nil {
+	//	log.Fatalf("Not a single face on the image")
+	//}
+	//catID := rec.Classify(nayoungFace.Descriptor)
+	//if catID < 0 {
+	//	log.Fatalf("Can't classify")
+	//}
+	//// Finally print the classified label. It should be "Nayoung".
+	//fmt.Println(labels[catID])
 }
